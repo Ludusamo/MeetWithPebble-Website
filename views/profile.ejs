@@ -16,25 +16,93 @@
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
 
+    <!-- SUCCESS MESSAGE -->
+    <% if (successMessage.length > 0) { %>
+        <div class="alert alert-success"><%= successMessage %></div>
+    <% } %>
+    <!-- Error MESSAGE -->
+    <% if (errorMessage.length > 0) { %>
+        <div class="alert alert-danger"><%= errorMessage %></div>
+    <% } %>
+
     <div class="row">
 
         <!-- LOCAL INFORMATION -->
         <div class="col-sm-12">
             <div class="well">
-                <h3><span class="fa fa-user"></span> Local</h3>
+                <h3><span class="fa fa-user"></span> User</h3>
                     <p>
                         <strong>first-name</strong>: <%= user.local.firstName %><br>
                         <strong>last-name</strong>: <%= user.local.lastName %><br>
                         <strong>email</strong>: <%= user.local.email %><br>
-			<strong>password</strong>: <%= user.local.password %><br>
 			<strong>timeline-token</strong>: <%= user.local.timelineToken %>
                     </p>
 		<a href="/edit-profile" class="btn btn-default btn-sm">Edit Profile</a>
             </div>
         </div>
 
-    </div>
+	<!-- Affiliated Groups  -->
+	<div class="col-sm-12">
+            <div class="well">
+                <h3><span class="fa fa-users"></span> Groups</h3>
+                    <p>
+		    	<table class="table table-hover">
+				<tr> 
+					<strong> 
+						<a href="/group/create-group"> 
+							Create new group...
+						</a>
+					</strong> 
+				</tr>
+				<% if (groups.length > 0) { %>
+					<% for (var i = 0; i < groups.length; i++) { %>					
+						<tr>
+							<td>
+								<a href="/group/<%= groups[i] %>">
+									<%= groups[i] %>
+								</a>
+							</td>
+						</tr>
+					<% } %>
+				<% } else { %>
+					<tr>
+						<td>No affiliated groups.</td>
+					</tr>
+				<% } %>
+		    	</table>
+                    </p>
+            </div>
+        </div>
 
+	<!-- Group Invites  -->
+	<div class="col-sm-12">
+            <div class="well">
+                <h3><span class="fa fa-users"></span> Invites</h3>
+                    <p>
+			<% if (invites.length > 0) { %>
+				<% for (var i = 0; i < invites.length; i++) { %>
+					<div class="row">
+						<div class="col-sm-10"><%= invites[i] %></div>
+						<div class="col-sm-1"> 
+							<a href="/group/<%= invites[i] %>/accept" class="btn btn-success btn-sm">
+								Accept
+							</a>
+						</div>
+						<div class="col-sm-1"> 
+							<a href="/group/<%= invites[i] %>/reject" class="btn btn-danger btn-sm">
+								Reject
+							</a>
+						</div>
+					</div>
+				<% } %>
+			<% } else { %>
+				No current invites.
+			<% } %>
+                    </p>
+            </div>
+        </div>
+
+    </div>
 </div>
 </body>
 </html>
