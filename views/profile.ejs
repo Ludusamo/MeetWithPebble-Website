@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Node Authentication</title>
+<title>	Profile: <%= user.local.firstName %>  <%= user.local.lastName %> </title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <style>
@@ -19,16 +19,17 @@
     <div class="row">
 
         <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="well">
                 <h3><span class="fa fa-user"></span> Local</h3>
-
                     <p>
-                        <strong>id</strong>: <%= user._id %><br>
+                        <strong>first-name</strong>: <%= user.local.firstName %><br>
+                        <strong>last-name</strong>: <%= user.local.lastName %><br>
                         <strong>email</strong>: <%= user.local.email %><br>
-                        <strong>password</strong>: <%= user.local.password %>
+			<strong>password</strong>: <%= user.local.password %><br>
+			<strong>timeline-token</strong>: <%= user.local.timelineToken %>
                     </p>
-
+		<a href="/edit-profile" class="btn btn-default btn-sm">Edit Profile</a>
             </div>
         </div>
 
