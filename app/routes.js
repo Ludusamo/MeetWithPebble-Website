@@ -5,12 +5,17 @@ module.exports = function(app, passport) {
 
 	// HOME PAGE
 	app.get('/', function(req, res) {
-		res.render('index.ejs');
+		res.render('index.ejs', {
+			user: req.user	
+		});
 	});
 
 	// LOG IN
 	app.get('/login', function(req, res) {
-		res.render('login.ejs', { message:req.flash('loginMessage') });
+		res.render('login.ejs', { 
+			message:req.flash('loginMessage'),
+			user: req.user
+		});
 	});
 
 	app.post('/login', passport.authenticate('local-login', {
@@ -21,7 +26,10 @@ module.exports = function(app, passport) {
 
 	// SIGN UP
 	app.get('/signup', function(req,res) {
-		res.render('signup.ejs', { message: req.flash('signupMessage') });
+		res.render('signup.ejs', { 
+			message: req.flash('signupMessage'),
+			user: req.user
+		});
 	});
 
 	app.post('/signup', passport.authenticate('local-signup', {
@@ -60,6 +68,24 @@ module.exports = function(app, passport) {
 	});
 
 	app.post('/group/create-group', createGroup);
+
+	// GROUP PORTAL
+	var searchString = '';	
+	app.get('/group/portal', function(req, res) {
+		Group.find({ 'groupName': {"$regex": searchString, "$options": "i"}}, 
+		function(err, docs) {
+			res.render('group-portal.ejs', {
+				groups:	docs,
+				user: req.user
+			});
+		});
+	});
+
+	app.post('/group/portal', function(req, res, next) {
+		searchString = req.body.groupName;
+		console.log(searchString);
+		res.redirect('/group/portal');
+	});
 
 	// GROUP PAGE
 	app.get('/group/:groupName', function(req, res) {
@@ -211,11 +237,16 @@ function rejectJoin(req, res, next) {
 };
 
 function createGroup(req, res, next) {
+	var reservedNames = [ 'create-group', 'accept', 'reject', 'portal' ]; // Can't use these names.
+	var isReserved = (reservedNames.indexOf(req.body.groupName) > -1) ? true : false;
 	Group.findOne({ 'groupName': req.body.groupName }, function(err, group) {
 		if (err)
 			return done(err);
 		if (group) {
 			req.flash('groupMessage', 'Group already exists.');
+			res.redirect('/group/create-group');
+		} else if (isReserved) {
+			req.flash('groupMessage', 'Cannot use reserved name.');
 			res.redirect('/group/create-group');
 		} else {
 			req.user.addGroup(req.body.groupName);
