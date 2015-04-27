@@ -67,7 +67,7 @@ module.exports = function(app, passport) {
 		});
 	});
 
-	app.post('/group/create-group', createGroup);
+	app.post('/group/create-group', createGroup);	
 
 	// GROUP PORTAL
 	var searchString = '';	
@@ -130,6 +130,16 @@ module.exports = function(app, passport) {
 			}
 		});
 	});
+	
+	// CREATE EVENT
+	app.get('/group/:groupName/create-event', isLoggedIn, function(req, res) {
+		res.render('create-event.ejs', {
+			message: req.flash('eventMessage'),
+			user: req.user
+		});
+	});
+
+	app.post('/group/:groupName/create-event', createEvent);
 
 	// ACCEPT INVITE
 	app.get('/group/:groupName/accept', isLoggedIn, joinGroup);
@@ -237,7 +247,7 @@ function rejectJoin(req, res, next) {
 };
 
 function createGroup(req, res, next) {
-	var reservedNames = [ 'create-group', 'accept', 'reject', 'portal' ]; // Can't use these names.
+	var reservedNames = [ 'create-group', 'accept', 'reject', 'portal', 'create-event' ]; // Can't use these names.
 	var isReserved = (reservedNames.indexOf(req.body.groupName) > -1) ? true : false;
 	Group.findOne({ 'groupName': req.body.groupName }, function(err, group) {
 		if (err)
@@ -247,6 +257,29 @@ function createGroup(req, res, next) {
 			res.redirect('/group/create-group');
 		} else if (isReserved) {
 			req.flash('groupMessage', 'Cannot use reserved name.');
+			res.redirect('/group/create-group');
+		} else {
+			req.user.addGroup(req.body.groupName);
+			req.user.save();
+
+			newGroup = new Group();
+			newGroup.groupName = req.body.groupName;
+			newGroup.addMember(req.user.local.email);
+			newGroup.save(function(err) {
+				if (err)
+					throw err;
+				return res.redirect('/group/' + req.body.groupName);
+			});	
+		}
+	});
+};
+
+function createEvent(req, res, next) {
+	Group.findOne({ 'groupName': req.body.groupName }, function(err, group) {
+		if (err)
+			return done(err);
+		if (group) {
+			req.flash('groupMessage', 'Group already exists.');
 			res.redirect('/group/create-group');
 		} else {
 			req.user.addGroup(req.body.groupName);

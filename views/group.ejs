@@ -98,6 +98,33 @@
 		    </p>
 	    </div>
 	</div>
+
+	<!-- Events -->
+	<div class="col-sm-12">
+	    <div class="well">
+		<h3><span class="fa fa-calendar"></span> Events</h3>
+		    <p>
+			<!-- Adding group members. -->
+			<strong> 
+				<a href="/group/<%= groupPage.groupName %>/create-event"> 
+					Create Event
+				</a>
+			</strong>
+			</br>
+			<table class="table table-hover">
+				<% if (groupPage.events.length > 0) { %>
+					<% for (var i = 0; i < groupPage.events.length; i++) { %>					
+						<tr>
+							<td><%= groupPage.events[i] %></td>
+						</tr>
+					<% } %>
+				<% } else { %>
+					<tr> <td> No events scheduled... </td> </tr>
+				<% } %>
+			</table>
+		    </p>
+	    </div>
+	</div>
 <% } %>
 
 </body>

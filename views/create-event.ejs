@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+    <title>Create Event</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> 
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+</head>
+
+<!-- Nav Bar -->
+<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="/">Meet With Pebble</a></div><div class="collapse navbar-collapse" id="navbar-collapse"><ul class="nav navbar-nav"><li><a href="/group/portal">Group Portal</a></li></ul><ul class="nav navbar-nav navbar-right"><% if (user != null) {	%><li><a href="/logout">Logout</a></li><% } else { %><li><a href="/login">Login</a></li><% } %></ul></div></div></nav>
+
+<body>
+<div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+    <h1><span class="fa fa-calendar"></span> Create Event</h1>
+
+    <!-- show any messages that come back with authentication -->
+    <% if (message.length > 0) { %>
+        <div class="alert alert-danger"><%= message %></div>
+    <% } %>
+
+    <!-- Create Group Form -->
+    <form class="form-horizontal" action="/group/create-group" method="post">
+	<div class="form-group">
+            <label>Event Name</label>
+            <input type="text" class="form-control" name="eventName" required>
+        </div>
+	<div class="form-group">
+		<label>Description</label>
+		<textarea class="form-control col-sm-12" rows="3" name="description"></textarea>
+	</div>
+	<div class="form-group">
+		<label>Date/Time</label>
+		<input type="datetime-local" class="form-control" name="dateTime" required>
+	</div>
+	<div class="form-group">
+		<label>Duration (Hours)</label>
+		<input type="number" class="form-control" name="duration" required>
+	</div>
+        <button type="submit" class="btn btn-warning btn-lg">Create</button>
+    </form>
+
+    <hr>
+
+    <p>Return to <a href="/profile">profile</a>.</p>
+
+</div>
+
+</div>
+</body>
+</html>

@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var groupSchema = mongoose.Schema({
 	groupName: String,
     	requests: [String],
+    	events: [String],
 	members: {
 		users: [String]
 	}
@@ -45,6 +46,15 @@ groupSchema.methods.hasRequest = function(email) {
 	var index = this.requests.indexOf(email);
 	if (index > -1) return true;
 	return false;
+};
+
+groupSchema.methods.removeEvent = function(eventName) {
+	var index = this.events.indexOf(eventName);
+	this.events.splice(index, 1);
+};
+
+groupSchema.methods.addEvent = function(eventName) {
+	this.events.push(eventName);
 };
 
 module.exports = mongoose.model('Group', groupSchema);
