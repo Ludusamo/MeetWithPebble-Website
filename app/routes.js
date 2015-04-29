@@ -1,5 +1,6 @@
 var User = require('../app/models/user');
 var Group = require('../app/models/group');
+var Event = require('../app/models/event');
 
 module.exports = function(app, passport) {
 
@@ -44,6 +45,7 @@ module.exports = function(app, passport) {
 			user: req.user,
 			groups: req.user.groups.groups,
 			invites: req.user.groups.invites,
+			eventInvites: req.user.groups.eventInvites,
 			successMessage: req.flash('successMessage'),
 			errorMessage: req.flash('errorMessage')
 		});
@@ -101,7 +103,7 @@ module.exports = function(app, passport) {
 					requests: group.requests
 				});
 			} else {
-				res.render('group-dne.ejs');
+				res.render('group-dne.ejs', {'user': req.user});
 			}
 		});
 	});
@@ -129,17 +131,7 @@ module.exports = function(app, passport) {
 				});
 			}
 		});
-	});
-	
-	// CREATE EVENT
-	app.get('/group/:groupName/create-event', isLoggedIn, function(req, res) {
-		res.render('create-event.ejs', {
-			message: req.flash('eventMessage'),
-			user: req.user
-		});
-	});
-
-	app.post('/group/:groupName/create-event', createEvent);
+	});	
 
 	// ACCEPT INVITE
 	app.get('/group/:groupName/accept', isLoggedIn, joinGroup);
@@ -153,6 +145,39 @@ module.exports = function(app, passport) {
 	app.get('/group/:groupName/accept/:email', isLoggedIn, acceptJoin);
 	// REJECT ENTRY
 	app.get('/group/:groupName/reject/:email', isLoggedIn, rejectJoin);
+	// ATTENDING EVENT
+	app.get('/group/:groupName/:eventName/accept/:email', isLoggedIn, attendingAccept);
+	// NOT ATTENDING EVENT
+	app.get('/group/:groupName/:eventName/reject/:email', isLoggedIn, attendingReject);
+
+	// CREATE EVENT
+	app.get('/group/:groupName/create-event', isLoggedIn, function(req, res) {
+		res.render('create-event.ejs', {
+			message: req.flash('eventMessage'),
+			user: req.user,
+			groupName: req.params.groupName
+		});
+	});
+
+	app.post('/group/:groupName/create-event', createEvent);
+
+	// EVENT PAGE
+	app.get('/group/:groupName/:eventName', function(req, res) {
+		Event.findOne({ 'groupName': req.params.groupName, 'eventName': req.params.eventName }, function(err, event) {
+			if (err)
+				return done(err);
+			if (event) {
+				res.render('event.ejs', {
+					successMessage: req.flash('successMessage'),
+					errorMessage: req.flash('errorMessage'),
+					user: req.user,
+					event: event,
+				});
+			} else {
+				res.render('event-dne.ejs', {'user': req.user});
+			}
+		});
+	});
 
 	// LOG OUT
 	app.get('/logout', function(req, res) {
@@ -203,7 +228,14 @@ function leaveGroup(req, res, next) {
 			return done(err);
 		group.removeMember(req.user.local.email);
 		group.save();
-		if (group.members.users.length == 0) group.remove();
+		if (group.members.users.length == 0) {
+			for (var i = 0; i < group.events.length; i++) {
+				Event.findOne({ 'groupName': group.groupName, 'eventName': group.events[i] }, function(err, event) {
+					event.remove();
+				});
+			}
+			group.remove();
+		}
 	});
 	res.redirect('/profile');
 };
@@ -246,6 +278,32 @@ function rejectJoin(req, res, next) {
 	res.redirect('/group/' + req.params.groupName);
 };
 
+function attendingAccept(req, res, next) {
+	Event.findOne({ 'groupName': req.params.groupName, 'eventName': req.params.eventName }, function(err, event) {
+		if (err)
+			return done(err);
+		event.switchToAttending(req.params.email);
+		event.save();
+	});
+	req.user.removeEventInvite({'groupName': req.params.groupName, 'eventName': req.params.eventName});
+	req.user.save();
+	req.flash('successMessage', 'Attending.');
+	res.redirect('/group/' + req.params.groupName + '/' + req.params.eventName);
+};
+
+function attendingReject(req, res, next) {
+	Event.findOne({ 'groupName': req.params.groupName, 'eventName': req.params.eventName }, function(err, event) {
+		if (err)
+			return done(err);
+		event.switchToNotAttending(req.params.email);
+		event.save();
+	});
+	req.user.removeEventInvite({'groupName': req.params.groupName, 'eventName': req.params.eventName});
+	req.user.save();
+	req.flash('successMessage', 'Not attending.');
+	res.redirect('/group/' + req.params.groupName + '/' + req.params.eventName);
+};
+
 function createGroup(req, res, next) {
 	var reservedNames = [ 'create-group', 'accept', 'reject', 'portal', 'create-event' ]; // Can't use these names.
 	var isReserved = (reservedNames.indexOf(req.body.groupName) > -1) ? true : false;
@@ -275,24 +333,32 @@ function createGroup(req, res, next) {
 };
 
 function createEvent(req, res, next) {
-	Group.findOne({ 'groupName': req.body.groupName }, function(err, group) {
+	Group.findOne({ 'groupName': req.params.groupName }, function(err, group) {
 		if (err)
 			return done(err);
-		if (group) {
-			req.flash('groupMessage', 'Group already exists.');
-			res.redirect('/group/create-group');
+		if (group.hasEvent(req.body.eventName)) {
+			req.flash('eventMessage', 'Event already exists.');
+			res.redirect('/group/' + req.params.groupName + 'create-event');
 		} else {
-			req.user.addGroup(req.body.groupName);
+			req.user.addEventInvite({groupName: req.params.groupName,
+				eventName: req.body.eventName});
 			req.user.save();
 
-			newGroup = new Group();
-			newGroup.groupName = req.body.groupName;
-			newGroup.addMember(req.user.local.email);
-			newGroup.save(function(err) {
-				if (err)
-					throw err;
-				return res.redirect('/group/' + req.body.groupName);
-			});	
+			group.addEvent(req.body.eventName);
+			group.save();
+
+			newEvent = new Event();
+			newEvent.groupName = req.params.groupName;
+			newEvent.eventName = req.body.eventName;
+			newEvent.description = req.body.description;
+			console.log(req.body.dateTime);
+			newEvent.time = req.body.dateTime;
+			newEvent.duration = req.body.duration;
+			for (var i = 0; i < group.members.users.length; i++) {
+				newEvent.addPending(group.members.users[i]);		
+			}
+			newEvent.save();
+			res.redirect('/group/' + req.params.groupName);
 		}
 	});
 };

@@ -57,4 +57,8 @@ groupSchema.methods.addEvent = function(eventName) {
 	this.events.push(eventName);
 };
 
+groupSchema.methods.hasEvent = function(eventName) {
+	return ((this.events.indexOf(eventName) > -1) ? true : false);
+};
+
 module.exports = mongoose.model('Group', groupSchema);

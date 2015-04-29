@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<title>	Event: <%= event.eventName %> </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> 
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+</head>
+
+<!-- Nav Bar -->
+<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header"><a class="navbar-brand" href="/">Meet With Pebble</a></div><div class="collapse navbar-collapse" id="navbar-collapse"><ul class="nav navbar-nav"><li><a href="/group/portal">Group Portal</a></li></ul><ul class="nav navbar-nav navbar-right"><% if (user != null) {	%><li><a href="/logout">Logout</a></li><% } else { %><li><a href="/login">Login</a></li><% } %></ul></div></div></nav>
+
+<body>
+<div class="container">
+
+	<div class="page-header text-center">
+		<h1><span class="fa fa-calendar"></span> <%= event.eventName %> </h1>
+		<h2><span class="fa fa-clock-o"></span> Starts: <%= event.time %> </h2>
+		<h2>Duration: <%= event.duration %> hours</h2>	
+	</div>
+	<!-- Description -->
+	<div class="well">
+    		<h4>Description:</h4></br>
+		<%= event.description %>
+	</div>
+
+	<!-- Error Messages -->
+	<% if (errorMessage.length > 0) { %>
+        	<div class="alert alert-danger"><%= errorMessage %></div>
+    	<% } %>
+	<!-- Success Messages -->
+	<% if (successMessage.length > 0) { %>
+        	<div class="alert alert-success"><%= successMessage %></div>
+    	<% } %>
+
+
+
+<!-- Members -->
+<div class="col-sm-12">
+    <div class="well">
+	<h3><span class="fa fa-users"></span> Members</h3>
+	    <p>
+	    	Attending:
+	    	<!-- Attending -->
+		<table class="table table-hover">
+			<% if (event.attending.length > 0) { %>
+				<% for (var i = 0; i < event.attending.length; i++) { %>
+					<tr>
+						<td><%= event.attending[i] %></td>
+					</tr>
+				<% } %>
+			<% } else { %>
+				<tr> <td>None</td></tr>
+			<% } %>
+		</table>
+		Pending:
+	    	<!-- Pending -->
+		<table class="table table-hover">
+			<% if (event.pending.length > 0) { %>
+				<% for (var i = 0; i < event.pending.length; i++) { %>	
+					<tr>
+						<td><%= event.pending[i] %></td>
+					</tr>
+				<% } %>
+			<% } else { %>
+				<tr> <td>None</td></tr>
+			<% } %>
+		</table>
+		Not Attending:
+	    	<!-- Not Attending -->
+		<table class="table table-hover">
+			<% if (event.notAttending.length > 0) { %>
+				<% for (var i = 0; i < event.notAttending.length; i++) { %>	
+					<tr>
+						<td><%= event.notAttending[i] %></td>
+					</tr>
+				<% } %>
+			<% } else { %>
+				<tr> <td>None</td></tr>
+			<% } %>
+		</table>
+	    </p>
+    </div>
+</div>
+
+</body>
+</html>

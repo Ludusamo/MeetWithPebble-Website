@@ -105,6 +105,34 @@
             </div>
         </div>
 
+	<!-- Event Invites  -->
+	<div class="col-sm-12">
+            <div class="well">
+                <h3><span class="fa fa-calendar"></span> Event Invites</h3>
+                    <p>
+			<% if (eventInvites.length > 0) { %>
+				<% for (var i = 0; i < eventInvites.length; i++) { %>
+					<div class="row">
+						<div class="col-sm-10"><%= eventInvites[i].groupName %>: <%= eventInvites[i].eventName %></div>
+						<div class="col-sm-1"> 
+							<a href="/group/<%= eventInvites[i].groupName %>/<%= eventInvites[i].eventName %>/accept/<%= user.local.email %>" class="btn btn-success btn-sm">
+								Accept
+							</a>
+						</div>
+						<div class="col-sm-1"> 
+							<a href="/group/<%= eventInvites[i].groupName %>/<%= eventInvites[i].eventName %>/reject/<%= user.local.email %>" class="btn btn-danger btn-sm">
+								Reject
+							</a>
+						</div>
+					</div>
+				<% } %>
+			<% } else { %>
+				No current invites.
+			<% } %>
+                    </p>
+            </div>
+        </div>
+
     </div>
 </div>
 </body>

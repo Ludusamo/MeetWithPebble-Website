@@ -11,7 +11,8 @@ var userSchema = mongoose.Schema({
 	},
 	groups: {
 		invites: [String],
-    		groups: [String]
+    		groups: [String],
+		eventInvites: [{'groupName': String, 'eventName': String}]
 	}
 });
 
@@ -49,6 +50,15 @@ userSchema.methods.addGroup = function(groupName) {
 userSchema.methods.removeGroup = function(groupName) {
 	var index = this.groups.groups.indexOf(groupName);
 	this.groups.groups.splice(index, 1);
+};
+
+userSchema.methods.addEventInvite = function(event) {
+	this.groups.eventInvites.push(event);
+};
+
+userSchema.methods.removeEventInvite = function(event) {
+	var index = this.groups.eventInvites.indexOf(event);
+	this.groups.eventInvites.splice(index, 1);
 };
 
 module.exports = mongoose.model('User', userSchema);

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 var eventSchema = mongoose.Schema({
+	groupName: String,
 	eventName: String,
     	description: String,
     	time: { type: Date, default: Date.now },	
@@ -33,7 +34,7 @@ eventSchema.methods.removeAttending = function(member) {
 	if (index > -1) this.attending.splice(index, 1);
 };
 
-eventSchema.methods.addNotAttending = function(member) {
+eventSchema.methods.addAttending = function(member) {
 	this.attending.push(member);
 };
 

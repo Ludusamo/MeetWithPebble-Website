@@ -24,7 +24,7 @@
     <% } %>
 
     <!-- Create Group Form -->
-    <form class="form-horizontal" action="/group/create-group" method="post">
+    <form class="form-horizontal" action="/group/<%= groupName %>/create-event" method="post">
 	<div class="form-group">
             <label>Event Name</label>
             <input type="text" class="form-control" name="eventName" required>
@@ -46,7 +46,7 @@
 
     <hr>
 
-    <p>Return to <a href="/profile">profile</a>.</p>
+    <p>Return to <a href="/group/<%= groupName %>">group page</a>.</p>
 
 </div>
 
