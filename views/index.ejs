@@ -16,6 +16,9 @@
 		</div>
 		<div class="collapse navbar-collapse" id="navbar-collapse">
 			<ul class="nav navbar-nav">
+				<% if (user != null) { %> 
+					<li><a href="/profile">Profile</a></li>
+				<% } %>
 				<li><a href="/group/portal">Group Portal</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">

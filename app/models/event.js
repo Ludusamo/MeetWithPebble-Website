@@ -11,6 +11,12 @@ var eventSchema = mongoose.Schema({
     	pending: [String]
 });
 
+eventSchema.methods.removeUser = function(member) {
+	this.removeNotAttending(member);
+	this.removePending(member);
+	this.removeAttending(member);
+};
+
 eventSchema.methods.switchToAttending = function(member) {
 	this.removeNotAttending(member);
 	this.removePending(member);

@@ -228,6 +228,12 @@ function leaveGroup(req, res, next) {
 			return done(err);
 		group.removeMember(req.user.local.email);
 		group.save();
+		for (var i = 0; i < group.events.length; i++) {
+				Event.findOne({ 'groupName': group.groupName, 'eventName': group.events[i] }, function(err, event) {
+					event.removeUser(req.user.local.email);
+					event.save();
+				});
+		}
 		if (group.members.users.length == 0) {
 			for (var i = 0; i < group.events.length; i++) {
 				Event.findOne({ 'groupName': group.groupName, 'eventName': group.events[i] }, function(err, event) {
@@ -340,9 +346,7 @@ function createEvent(req, res, next) {
 			req.flash('eventMessage', 'Event already exists.');
 			res.redirect('/group/' + req.params.groupName + 'create-event');
 		} else {
-			req.user.addEventInvite({groupName: req.params.groupName,
-				eventName: req.body.eventName});
-			req.user.save();
+			
 
 			group.addEvent(req.body.eventName);
 			group.save();
@@ -356,6 +360,11 @@ function createEvent(req, res, next) {
 			newEvent.duration = req.body.duration;
 			for (var i = 0; i < group.members.users.length; i++) {
 				newEvent.addPending(group.members.users[i]);		
+				User.findOne({'local.email': group.members.users[i]}, function(err, user) {
+					user.addEventInvite({groupName: req.params.groupName, 
+						eventName: req.body.eventName});
+					user.save();
+				});
 			}
 			newEvent.save();
 			res.redirect('/group/' + req.params.groupName);
