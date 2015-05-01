@@ -168,9 +168,8 @@ module.exports = function(app, passport) {
 		Event.findOne({ 'groupName': req.params.groupName, 'eventName': req.params.eventName }, function(err, event) {
 			// TEMP
 			Group.findOne({ 'groupName': req.params.groupName }, function(err, group) {
+				console.log("hi");
 				var pin = Timeline.createPin(group, event);
-				console.log(pin);
-
 				Timeline.sendPin(req.user, pin);
 			});	
 			
