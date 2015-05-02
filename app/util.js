@@ -3,7 +3,7 @@ module.exports = {
 		var newTime = new Date(time);	
 		var originalTime = new Date(time);
 		console.log(newTime.getTimezoneOffset());
-		newTime.setHours(newTime.getHours() + (newTime.getTimezoneOffset() / 60) - 4);
+		newTime.setHours(newTime.getHours() + (newTime.getTimezoneOffset() / 60));
 		return newTime;
 	}
 };
