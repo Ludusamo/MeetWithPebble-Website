@@ -21,5 +21,22 @@ module.exports = {
 			if (err) console.error(err);
 			else console.log("Pin successfully sent.");
 		});
+	},
+	deletePin: function(user, group, event) {
+		var p = new Timeline.Pin ({
+			"id": group._id.oid + event._id.oid,
+			"time": event.time,
+			"duration": event.duration * 60,
+			"layout": new Timeline.Pin.Layout({
+				"type": "calendarPin",
+				"title": event.eventName,
+				"locationName": event.location,
+				"body": event.description
+			})
+		})
+		timeline.deleteUserPin(user, p, function(err) {
+			if (err) console.error(err);
+			else console.log("Pin successfuly deleted.");
+		});
 	}
 };

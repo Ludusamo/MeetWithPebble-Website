@@ -45,6 +45,15 @@ module.exports = function(app, passport) {
 
 	// PROFILE
 	app.get('/profile', isLoggedIn, function(req, res) {
+		for (var i = 0; i < req.user.groups.eventInvites.length; i++) {
+			Event.findOne({ 'groupName': req.user.groups.eventInvites[i].groupName, 'eventName': req.user.groups.eventInvites[i].eventName }, function(err, event) {
+				if (!event) {
+					req.user.removeEventInvite(req.user.groups.eventInvites[i]);
+					req.user.save();
+					i--;
+				}	
+			}, 	
+		}
 		res.render('profile.ejs', {
 			user: req.user,
 			groups: req.user.groups.groups,
@@ -108,10 +117,13 @@ module.exports = function(app, passport) {
 						if (d.getDate() != dorig.getDate()) {
 							d.setDate(dorig.getDate());
 						}
-						console.log(event.time);
-						console.log(d);
 						if (event) {
 							if (event.time < d) {
+								for (var i = 0; i < group.members.users.length; i++) {
+									User.findOne({ 'local.email': group.members.users[i] }, function(err, user) {
+										Timeline.deletePin(user, group, event);
+									});
+								}
 								group.removeEvent(event.eventName);
 								group.save();
 								event.remove();
@@ -218,6 +230,16 @@ module.exports = function(app, passport) {
 				}
 			});
 		});
+	});
+
+	app.get('/user-exists/:token', function(req,res) {
+		User.findOne({ 'local.timelineToken': req.params.token }, function(err, user) {
+			if (user) {
+				res.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><exists>yes</exists>");
+			} else {
+				res.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><exists>no</exists>");
+			}
+		});	
 	});
 
 	// LOG OUT
@@ -402,7 +424,7 @@ function createEvent(req, res, next) {
 			newEvent.description = req.body.description;
 			newEvent.location = req.body.eventLocation;
 			console.log(req.body.dateTime);
-			newEvent.time = Util.converToLocal(req.body.dateTime);
+			newEvent.time = Util.convertToLocal(req.body.dateTime);
 			newEvent.duration = req.body.duration;
 			for (var i = 0; i < group.members.users.length; i++) {
 				newEvent.addPending(group.members.users[i]);		
