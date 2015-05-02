@@ -4,9 +4,11 @@ var timeline = new Timeline();
 
 module.exports = {
 	createPin: function(group, event) {
+		var time = new Date(event.time);
+		time.setHours(newTime.getHours() + 4);
 		return new Timeline.Pin ({
 			"id": group._id.oid + event._id.oid,
-			"time": event.time,
+			"time": time,
 			"duration": event.duration * 60,
 			"layout": new Timeline.Pin.Layout({
 				"type": "calendarPin",
