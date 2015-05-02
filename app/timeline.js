@@ -5,7 +5,7 @@ var timeline = new Timeline();
 module.exports = {
 	createPin: function(group, event) {
 		var time = new Date(event.time);
-		time.setHours(newTime.getHours() + 4);
+		time.setHours(time.getHours() + 4);
 		return new Timeline.Pin ({
 			"id": group._id.oid + event._id.oid,
 			"time": time,
