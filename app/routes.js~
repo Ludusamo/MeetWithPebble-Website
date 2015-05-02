@@ -52,7 +52,7 @@ module.exports = function(app, passport) {
 					req.user.save();
 					i--;
 				}	
-			}, 	
+			});
 		}
 		res.render('profile.ejs', {
 			user: req.user,
@@ -417,6 +417,7 @@ function createEvent(req, res, next) {
 
 			group.addEvent(req.body.eventName);
 			group.save();
+
 
 			newEvent = new Event();
 			newEvent.groupName = req.params.groupName;
