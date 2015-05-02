@@ -18,7 +18,16 @@
 		<h1><span class="fa fa-calendar"></span> <%= event.eventName %> </h1>
 		<h2><span class="fa fa-clock-o"></span> Starts: <%= event.time %> </h2>
 		<h2>Duration: <%= event.duration %> hours</h2>	
+
+	<% if (user != null) { %>
+		<% if (user.isInGroup(groupPage.groupName)) { %>
+	<a href="/group/<%= groupPage.groupName %>/<%= event.eventName %>/delete-event" class="btn btn-primary btn-sm">
+			Delete Event
+			</a>
+		<% } %>
+	<% } %>
 	</div>
+
 	<!-- Description -->
 	<div class="well">
     		<h4>Description:</h4></br>

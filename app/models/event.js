@@ -4,6 +4,7 @@ var eventSchema = mongoose.Schema({
 	groupName: String,
 	eventName: String,
     	description: String,
+    	location: String,
     	time: { type: Date, default: Date.now },	
     	duration: Number,
     	attending: [String],

@@ -13,13 +13,33 @@ module.exports = {
 				"title": event.eventName,
 				"locationName": event.location,
 				"body": event.description
-			})
+			}),
+			"reminders": [
+				{
+					"time": event.time - (24 * 60),
+					"layout": {
+						"type": "calendarReminder",
+						"title": event.eventName,
+						"locationName": event.location,
+						"tinyIcon": "system://images/TIMELINE_CALENDAR"
+					}
+				},
+				{
+					"time": event.time - (12 * 60),
+					"layout": {
+						"type": "calendarReminder",
+						"title": event.eventName,
+						"locationName": event.location,
+						"tinyIcon": "system://images/TIMELINE_CALENDAR"
+					}
+				}
+			]
 		})
 	},
 	sendPin: function(user, pin) {
 		timeline.sendUserPin(user.local.timelineToken, pin, function(err) {
 			if (err) console.error(err);
-			console.log("Pin successfully sent.");
+			else console.log("Pin successfully sent.");
 		});
 	}
 };
