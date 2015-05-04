@@ -23,6 +23,8 @@
 	"cookie-parser" : "~1.0.0",
 	"method-override" : "~1.0.0",
 	"express-session" : "~1.0.0",
+
+	"xml" : "latest",
 	
 	"pebble-api" : "latest"
   },

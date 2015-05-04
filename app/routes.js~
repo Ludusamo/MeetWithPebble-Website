@@ -4,7 +4,9 @@ var Event = require('../app/models/event');
 
 var Timeline = require('../app/timeline');
 
-var Util = require('../app/util');
+var Util = require('../app/util'); 
+
+var xml = require('xml');
 
 module.exports = function(app, passport) {
 
@@ -235,11 +237,13 @@ module.exports = function(app, passport) {
 	app.get('/user-exists/:token', function(req,res) {
 		User.findOne({ 'local.timelineToken': req.params.token }, function(err, user) {
 			if (user) {
-				res.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><exists>yes</exists>");
+				res.send("{'exists':'true'}");
 			} else {
-				res.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><exists>no</exists>");
+				var test = {"exists":"false"};
+				res.set('Content-Type', 'application/json');
+				res.send(JSON.stringify(test));
 			}
-		});	
+		});
 	});
 
 	// LOG OUT
@@ -417,7 +421,6 @@ function createEvent(req, res, next) {
 
 			group.addEvent(req.body.eventName);
 			group.save();
-
 
 			newEvent = new Event();
 			newEvent.groupName = req.params.groupName;
