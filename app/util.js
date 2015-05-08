@@ -5,5 +5,11 @@ module.exports = {
 		console.log(newTime.getTimezoneOffset());
 		newTime.setHours(newTime.getHours() + (newTime.getTimezoneOffset() / 60));
 		return newTime;
+	},
+	isLoggedIn: function(req, res, next) {
+		if (req.isAuthenticated())
+			return next();
+
+		res.redirect('/');
 	}
 };

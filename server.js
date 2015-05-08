@@ -30,6 +30,9 @@ app.use(passport.session());
 app.use(flash());
 
 require('./app/routes.js')(app, passport);
+require('./app/group-routes.js')(app, passport);
+require('./app/event-routes.js')(app, passport);
+require('./app/info-routes.js')(app, passport);
 
 app.listen(port);
 console.log('Server started on port ' + port);
