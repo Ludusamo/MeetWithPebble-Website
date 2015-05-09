@@ -93,6 +93,7 @@ module.exports = function(app, passport) {
 			'password': req.body.password
 		};
 		res.location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(options));	
+		res.send(null);
 	});			
 };
 
