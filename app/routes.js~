@@ -72,25 +72,28 @@ module.exports = function(app, passport) {
 		});
 	});		
 
-	app.post('/edit-profile', updateUserInfo);		
-	
-	app.get('/user-exists/:token', function(req,res) {
-		User.findOne({ 'local.timelineToken': req.params.token }, function(err, user) {
-			if (user) {
-				res.send("{'exists':'true'}");
-			} else {
-				var test = {"exists":"false"};
-				res.set('Content-Type', 'application/json');
-				res.send(JSON.stringify(test));
-			}
-		});
-	});
+	app.post('/edit-profile', updateUserInfo);			
 
 	// LOG OUT
 	app.get('/logout', function(req, res) {
 		req.logout();
 		res.redirect('/');
 	});
+
+	// APP CONFIG
+	app.get('/app-config', function(req,res) {
+		res.render('appconfig.ejs', {
+			user: req.user
+		});
+	});
+	
+	app.post('/app-config', function(req,res,next) {
+		options = {
+			'email': req.body.email,
+			'password': req.body.password
+		};
+		res.location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(options));	
+	});			
 };
 
 function updateUserInfo(req, res, next) {

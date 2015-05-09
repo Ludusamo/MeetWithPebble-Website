@@ -79,6 +79,21 @@ module.exports = function(app, passport) {
 		req.logout();
 		res.redirect('/');
 	});
+
+	// APP CONFIG
+	app.get('/app-config', function(req,res) {
+		res.render('appconfig.ejs', {
+			user: req.user
+		});
+	});
+	
+	app.post('/app-config', function(req,res,next) {
+		options = {
+			'email': req.body.email,
+			'password': req.body.password
+		};
+		res.location = 'pebblejs://close#' + encodeURIComponent(JSON.stringify(options));	
+	});			
 };
 
 function updateUserInfo(req, res, next) {
