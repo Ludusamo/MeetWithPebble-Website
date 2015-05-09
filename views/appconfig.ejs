@@ -17,17 +17,17 @@
     <h1><span class="fa fa-cog"></span> Settings</h1>
 
     <!-- LOGIN FORM -->
-    <form action="/app-config" method="post">
+    <form action="/app-config">
         <div class="form-group">
             <label>Email</label>
-            <input type="text" class="form-control" name="email">
+            <input type="text" class="form-control" id="email">
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" class="form-control" name="password">
+            <input type="password" class="form-control" id="password">
         </div>
 
-        <button type="submit" class="btn btn-warning btn-lg">Done</button>
+        <button id="submit" class="btn btn-warning btn-lg">Done</button>
     </form>
 
     <hr>
@@ -36,4 +36,25 @@
 
 </div>
 </body>
+
+<script>
+	function saveOptions() {
+		var options = {
+			'email': $("#email").val(),
+			'password': $("#password").val()
+		}
+		return options;
+	}
+
+	$().ready(function() {
+		$("#submit").click(function() {
+			console.log("Submit");
+
+			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+			console.log("Warping to: " + location);
+			console.log(location);
+			document.location = location;
+		});
+	});
+</script>
 </html>
