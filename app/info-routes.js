@@ -28,7 +28,7 @@ module.exports = function(app, passport) {
 	
 	app.get('/user-exists/:token', function(req,res) {
 		res.set('Content-Type', 'application/json');
-		User.findOne({ 'local.email': req.params.email }, function(err, user) {
+		User.findOne({ 'local.timelineToken': req.params.token }, function(err, user) {
 			if (user) {
 				res.send({'exists':0});
 			} else {
