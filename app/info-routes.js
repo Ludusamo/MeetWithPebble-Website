@@ -19,6 +19,13 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.get('/get-user/:token', function(req,res) {
+		User.findOne({ 'local.email': req.params.email }, function(err, user) {
+			res.set('Content-Type', 'application/json');
+			res.send(user);
+		});
+	});
+
 	app.get('/set-token/:email/:pass/:token', function(req,res) {
 		User.findOne({ 'local.email': req.params.email }, function(err, user) {
 			res.set('Content-Type', 'application/json');
