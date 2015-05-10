@@ -25,6 +25,17 @@ module.exports = function(app, passport) {
 			res.send(user);
 		});
 	});
+	
+	app.get('/user-exists/:token', function(req,res) {
+		res.set('Content-Type', 'application/json');
+		User.findOne({ 'local.email': req.params.email }, function(err, user) {
+			if (user) {
+				res.send({'exists':true});
+			} else {
+				res.send({'exists':false});
+			}
+		});
+	});
 
 	app.get('/set-token/:email/:pass/:token', function(req,res) {
 		User.findOne({ 'local.email': req.params.email }, function(err, user) {
