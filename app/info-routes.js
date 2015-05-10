@@ -30,9 +30,9 @@ module.exports = function(app, passport) {
 		res.set('Content-Type', 'application/json');
 		User.findOne({ 'local.email': req.params.email }, function(err, user) {
 			if (user) {
-				res.send({'exists':true});
+				res.send({'exists':'true'});
 			} else {
-				res.send({'exists':false});
+				res.send({'exists':'false'});
 			}
 		});
 	});
